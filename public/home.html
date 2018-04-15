@@ -5,30 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>主页---商品页</title>
+  <style>
+      .wrapper{
+        margin: 100px auto;
+        width: 400px;
+      }
+      .wrapper a{
+        float: right;
+        font-size: 12px;
+      }
+      ul li{ 
+        list-style: none;
+        float: left;
+        border: 1px solid #eaeaea;
+        padding: 0 10px;
+      }
+      ul .btn{ 
+        display: block;
+        margin: auto;
+        padding: 0 10px;
+        height: 30px;
+        border: 1px dotted #000;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+      }
+  </style>
 </head>
 <body>
-  <ul id="home">
-
-  </ul>
+  <div class="wrapper">
+    <a href="addCommodity.html">添加商品</a>
+    <ul id="home"></ul>
+  </div>
 </body>
 <script type="text/javascript" src="./js/jquery.min.js"></script>
 <script>
   function getData(){
     $.ajax({
-       url:'/getCommodity',
-       type:'POST',
-       success:function(res){
-          //  console.log('res', res)
-           if(res.code == 0){
-             //未登陆
-            //  location.href='login.html';
-           }
-       },
-       error:function(res,err){
-          console.log('err', err);
-       }
-   });
+        url:'/getCommodity',
+        type:'GET',
+        success:function(res){
+          if(res.code){
+            //未登陆
+            let commodity = res.data, li = '', uId = res.uId;
+            commodity.forEach(item => {
+              let param = JSON.stringify({
+                name: item.name,
+                price: item.price,
+                uId
+              })
+              li += `<li>
+                  <p><span>名称：</span>${item.name}</p>
+                  <p><span>价格：</span>${item.price}</p>
+                  <p><span class="btn" onclick='addCart(${param})'>加入购物车</span></p>
+                </li>`
+            });
+            
+            $('#home').append(li);
+            // console.log('btn', $('.btn'))
+          }
+        },
+        error:function(res,err){
+            console.log('err', err);
+        }
+    });
   }
   getData();
+  
+  function addCart(param){
+    $.ajax({
+        url:'/addCart',
+        type:'POST',
+        data: param,
+        success:function(res){
+          console.log('res', res)
+          if(res.code){
+           
+          }
+        },
+        error:function(res,err){
+            console.log('err', err);
+        }
+    });
+  }
 </script>
-</html>
+</html

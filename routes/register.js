@@ -3,7 +3,6 @@ global.dbHelper = require('../common/dbHelp.js')
 module.exports = function ( app ) {
     app.get('/register', function(req, res) {
         // res.render('register.html');
-        console.log('===req.session===get', req.session);
         console.log('进入注册页面')
     });
     app.post('/register', function (req, res) {
@@ -41,7 +40,6 @@ module.exports = function ( app ) {
                     }
                 });
             }
-            console.log('===req.session===post', req.session);
         });
     });
 }

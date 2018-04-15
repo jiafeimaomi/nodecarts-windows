@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>添加商品</title>
+  <style>
+    .wrapper{
+      margin: 100px auto;
+      width: 400px;
+    }
+    .wrapper a{
+      float: right;
+      font-size: 12px;
+    }
+    #addCommodity input{
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <p>添加商品</p>
+    <a href="home.html">返回商品页</a>
+    <form action="" id="addCommodity">
+      <input type="text" name="commodityname" value='电冰箱' placeholder="商品名称"/>
+      <input type="text" name="commodityprice" value='2000' placeholder="商品价格"/>
+      <input type="button" onclick="addCommodity()" value="添加">
+    </form>
+  </div>
+</body>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script>
+  function addCommodity(){
+    var data = $("#addCommodity").serialize();
+    console.log('data', data);
+    $.ajax({
+       url:'/addCommodity',
+       type:'POST',
+       data,
+       success:function(res){
+          //  console.log('res', res)
+          if(res){
+            alert(res.msg);
+          }
+       },
+       error:function(res,err){
+          console.log('err', err);
+       }
+   });
+  }
+</script>
+</html>
