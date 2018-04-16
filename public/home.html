@@ -30,6 +30,9 @@
         line-height: 30px;
         cursor: pointer;
       }
+      .addcommodity{
+        display: block;
+      }
   </style>
 </head>
 <body>
@@ -60,10 +63,10 @@
                   <p><span class="btn" onclick='addCart(${param})'>加入购物车</span></p>
                 </li>`
             });
-            
             $('#home').append(li);
             // console.log('btn', $('.btn'))
           }
+          alert(res.msg);
         },
         error:function(res,err){
             console.log('err', err);

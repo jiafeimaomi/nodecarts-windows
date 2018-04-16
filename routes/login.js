@@ -10,20 +10,30 @@ module.exports = function ( app ) {
             uname = req.body.username,
             upass = req.body.password;
         // console.log('req.body', req.body)
-        User.findOne({name: uname, password: upass}, function (error, doc) {
-            console.log('doc', doc)
-            if (doc) {
-                req.session.user = doc;
+        User.findOne({name: uname}, function (error, doc) {
+            if(doc){
+                User.findOne({name: uname, password: upass}, function(error, doc){
+                    console.log('doc', doc)
+                    if (doc) {
+                        req.session.user = doc;
+                        res.send({
+                            code: 200,
+                            msg: '用户登陆成功！'
+                        });
+                    } else {
+                        res.send({
+                            code: 0,
+                            type: 2,
+                            msg: '密码错误！'
+                        })
+                    }
+                })
+            }else{
                 res.send({
-                    code: 200,
-                    msg: '用户登陆成功！'
-                });
-                // console.log('====req.session====', req.session)
-            } else {
-              res.send({
-                code: 0,
-                msg: '用户名或密码错误！'
-              })
+                    code: 0,
+                    type: 1, //type为1表示用户名不存在，2表示密码错误
+                    msg: '用户名不存在！'
+                })
             }
         });
     });

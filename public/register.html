@@ -17,15 +17,19 @@
 <script>
   function register(){
     var data = $('#register').serialize();
-    console.log('data--', data);
+    // console.log('data--', data);
     $.ajax({
        url:'/register',
        type:'POST',
        data,
-       success:function(data,status){
-           if(status == 'success'){
+       success:function(res,status){
+           if(res.code == 200){
                location.href='login.html';
+           }else{
+            $('input[type="text"]').val('');
+            $('input[type="password"]').val('');
            }
+           alert(res.msg);
        },
        error:function(res,err){
           console.log('err', err);

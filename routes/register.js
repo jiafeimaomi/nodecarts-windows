@@ -2,15 +2,11 @@
 global.dbHelper = require('../common/dbHelp.js')
 module.exports = function ( app ) {
     app.get('/register', function(req, res) {
-        // res.render('register.html');
         console.log('进入注册页面')
     });
     app.post('/register', function (req, res) {
         var User = global.dbHelper.getModel('user'),
             uname = req.body.username;
-        // console.log('User', User)
-        // console.log('uname', uname)
-        // console.log('req.body', req.body, req.session)
         User.findOne({name: uname}, function (error, doc) {
             // console.log('doc', doc)
             if (doc) {

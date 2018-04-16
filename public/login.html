@@ -8,8 +8,8 @@
 </head>
 <body>
   <form action="" id="login">
-    <input type="text" name="username" value='aaa' placeholder="用户名"/>
-    <input type="password" name="password" value='123' placeholder="密码"/>
+    <input type="text" name="username" placeholder="用户名"/>
+    <input type="password" name="password" placeholder="密码"/>
     <input type="button" onclick="login()" value="登陆">
   </form>
 </body>
@@ -21,12 +21,18 @@
        url:'/login',
        type:'POST',
        data,
-       success:function(data, status){
-         console.log('data', data, status)
-          if(status === 'success'){
-            alert(data.msg);
+       success:function(res, status){
+          if(res.code == 200){
             location.href='home.html';
+          }else{
+            if(res.type == 1){
+              $('input[name="username"]').val('');
+              $('input[name="password"]').val('');
+            }else{
+              $('input[name="password"]').val('');
+            }
           }
+          alert(res.msg);
        },
        error:function(res, err){
           console.log('err', err);
