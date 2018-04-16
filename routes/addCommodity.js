@@ -1,8 +1,7 @@
 // app：express对象
-global.dbHelper = require('../common/dbHelp.js')
-module.exports = function ( app ) {
+module.exports = function ( app, dbHelper ) {
     app.post('/addCommodity', function (req, res) {
-        var Commodity = global.dbHelper.getModel('commodity');
+        var Commodity = dbHelper.getModel('commodity');
         // console.log('req' ,req.body)
         var commodityname = req.body.commodityname;
         Commodity.findOne({name: commodityname}, function (error, doc) {

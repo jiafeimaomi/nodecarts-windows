@@ -1,8 +1,7 @@
 // app：express对象
-global.dbHelper = require('../common/dbHelp.js')
-module.exports = function ( app ) {
+module.exports = function ( app, dbHelper ) {
     app.get('/getCart', function (req, res) {
-      var Cart = global.dbHelper.getModel('cart');
+      var Cart = dbHelper.getModel('cart');
       Cart.find({}, function (error, docs) {
       //   console.log('doc', doc)
         if (docs && docs.length) {

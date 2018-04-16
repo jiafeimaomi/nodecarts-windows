@@ -1,11 +1,10 @@
 // app：express对象
-global.dbHelper = require('../common/dbHelp.js')
-module.exports = function ( app ) {
+module.exports = function ( app, dbHelper ) {
     app.get('/register', function(req, res) {
         console.log('进入注册页面')
     });
     app.post('/register', function (req, res) {
-        var User = global.dbHelper.getModel('user'),
+        var User = dbHelper.getModel('user'),
             uname = req.body.username;
         User.findOne({name: uname}, function (error, doc) {
             // console.log('doc', doc)

@@ -1,8 +1,7 @@
 // app：express对象
-global.dbHelper = require('../common/dbHelp.js')
-module.exports = function ( app ) {
+module.exports = function ( app, dbHelper ) {
     app.get('/getCommodity', function (req, res) {
-        var Commodity = global.dbHelper.getModel('commodity');
+        var Commodity = dbHelper.getModel('commodity');
         // console.log('req.session----home', req.session)
         if(req.session.user){
             Commodity.find({}, function (error, docs) {
