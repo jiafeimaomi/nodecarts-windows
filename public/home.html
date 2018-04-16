@@ -8,11 +8,14 @@
   <style>
       .wrapper{
         margin: 100px auto;
-        width: 400px;
+        width: 800px;
       }
       .wrapper a{
-        float: right;
         font-size: 12px;
+        padding-right: 30px;
+      }
+      ul{
+        margin-top: 10px;
       }
       ul li{ 
         list-style: none;
@@ -30,14 +33,18 @@
         line-height: 30px;
         cursor: pointer;
       }
-      .addcommodity{
+      .wrapper .link{ display: none;}
+      .wrapper .addcommodity{
         display: block;
       }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <a href="addCommodity.html">添加商品</a>
+    <p class="link">
+      <a href="addCommodity.html">添加商品</a>
+      <a href="cart.html">购物车</a>
+    </p>
     <ul id="home"></ul>
   </div>
 </body>
@@ -51,6 +58,9 @@
           if(res.code){
             //未登陆
             let commodity = res.data, li = '', uId = res.uId;
+            if(uId){
+              $('.wrapper> .link').addClass('addcommodity');
+            }
             commodity.forEach(item => {
               let param = JSON.stringify({
                 name: item.name,
@@ -64,7 +74,6 @@
                 </li>`
             });
             $('#home').append(li);
-            // console.log('btn', $('.btn'))
           }
           alert(res.msg);
         },
@@ -81,10 +90,7 @@
         type:'POST',
         data: param,
         success:function(res){
-          console.log('res', res)
-          if(res.code){
-           
-          }
+          alert(res.msg)
         },
         error:function(res,err){
             console.log('err', err);

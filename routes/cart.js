@@ -22,28 +22,47 @@ module.exports = function ( app ) {
 
   app.post('/addCart', function (req, res) {
     var Cart = global.dbHelper.getModel('cart');
-    // console.log('req------', req.body, typeof req.body)
     let param = req.body;
-    // console.log('param', param)
-    Cart.create({
-      uId: param.uId,
-      cName: param.name,
-      cPrice: param.price,
-      cQuantity: 1
-    }, function(error, doc){
-      // console.log('doc------', doc)
+    // console.log('param', param);
+    Cart.findOne({cName: param.name}, function(error, doc){
+      // console.log('购物车', doc)
       if(doc){
-        res.send({
-          code: 200,
-          msg: "添加购物车成功！"
+        //如果购物车中已存在此商品，则将数量加1
+        Cart.update({_id: doc._id}, {$set: {cQuantity: +doc.cQuantity+1, cStatus: false}}, function(error, doc){
+          if(doc){
+            res.send({
+              code: 200,
+              msg: "添加购物车成功！"
+            })
+          }else{
+            res.send({
+              code: 0,
+              msg: "添加购物车失败！"
+            })
+          }
         })
       }else{
-        res.send({
-          code: 0,
-          msg: "添加购物车失败！"
+        Cart.create({
+          uId: param.uId,
+          cName: param.name,
+          cPrice: param.price,
+          cQuantity: 1
+        }, function(error, doc){
+          if(doc){
+            res.send({
+              code: 200,
+              msg: "添加购物车成功！"
+            })
+          }else{
+            res.send({
+              code: 0,
+              msg: "添加购物车失败！"
+            })
+          }
         })
       }
     })
+    
   });
   app.post('/delCart', function (req, res) {
     var Cart = global.dbHelper.getModel('cart');

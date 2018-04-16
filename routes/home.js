@@ -3,10 +3,9 @@ global.dbHelper = require('../common/dbHelp.js')
 module.exports = function ( app ) {
     app.get('/getCommodity', function (req, res) {
         var Commodity = global.dbHelper.getModel('commodity');
-        console.log('req.session----home', req.session)
+        // console.log('req.session----home', req.session)
         if(req.session.user){
             Commodity.find({}, function (error, docs) {
-            //   console.log('docs', docs)
               if (docs && docs.length) {
                   res.send({
                       code: 200,
@@ -26,7 +25,6 @@ module.exports = function ( app ) {
             code: 0,
             msg: '您未登陆，请先登陆！'
           })
-          // res.redirect('/login.html');
         }
     });
 }
