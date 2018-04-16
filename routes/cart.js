@@ -47,11 +47,52 @@ module.exports = function ( app ) {
   });
   app.post('/delCart', function (req, res) {
     var Cart = global.dbHelper.getModel('cart');
-    console.log('---', req.body)
+    // console.log('---', req.body)
     Cart.remove({
       _id: req.body.cId
     }, function(error, doc){
-      console.log('doc------', doc)
+      // console.log('doc------', doc)
+      if(doc){
+        res.send({
+          code: 200,
+          msg: "购物车移除商品成功！"
+        })
+      }else{
+        res.send({
+          code: 0,
+          msg: "购物车移除商品失败！"
+        })
+      }
+    })
+  });
+
+  app.post('/settle', function (req, res) {
+    var Cart = global.dbHelper.getModel('cart');
+    var carts = req.body.cart;
+    carts.map((item, key)=>{
+      // console.log('item', item);
+      let updateSuccess = true;
+      Cart.update({ _id: item.cId}, {$set : { cQuantity : item.num, cStatus:true }}, function(error, doc){
+        if(!doc){
+          updateSuccess = false;
+        }
+      })
+      if(!updateSuccess){
+        res.send({
+          code: 0,
+          msg: '结算失败！'
+        })
+      }else{
+        res.send({
+          code: 200,
+          msg: '结算成功！'
+        })
+      }
+    })
+    Cart.update({
+      _id: req.body.cId
+    }, function(error, doc){
+      // console.log('doc------', doc)
       if(doc){
         res.send({
           code: 200,

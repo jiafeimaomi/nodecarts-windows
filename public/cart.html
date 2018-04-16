@@ -55,6 +55,9 @@
             cursor: pointer;
             color: #aaa;
         }
+        .gray{
+            background: gray;
+        }
         li span:nth-child(4) input{
             width: 30px;
             height: 25px;
@@ -68,8 +71,6 @@
         li span:nth-child(5) input{
             cursor: pointer;
         }
-        
-
     </style>
 </head>
 <body>
@@ -91,15 +92,14 @@
        url:'/getCart',
        type:'GET',
        success:function(res){
-          // console.log('res', res)
           if(res.code){
             let carts = res.data, li = ''
             carts.forEach(item => {
               li += `<li>
-                  <span><input type='checkbox' class="select"/></span>
+                  <span id='${item._id}'><input type='checkbox' class="select" name="select" onclick="changeSelect(event)"/></span>
                   <span>${item.cName}</span>
-                  <span>${item.cPrice}</span>
-                  <span><b class='btnchange btn-minus'>-</b><input type='text' value='1'/><b class='btnchange btn-add'>+</b></span>
+                  <span class='price'>${item.cPrice}</span>
+                  <span><b data-type='btnminus' class='btnchange btn-minus' onclick="changeNum(event)">-</b><input type='text' value='${item.cQuantity}' data-type='input' class='num' onchange="changeNum(event)"/><b data-type='btnadd' class='btnchange btn-add' onclick="changeNum(event)">+</b></span>
                   <span><input type='button' value='删除' onclick='delCart("${item._id}", event)'/></span>
                 </li>`
             });
@@ -112,6 +112,52 @@
    });
   }
   getData();
+  function changeSelect(e){
+    var selectAll = document.getElementById('selectAll');
+    if(e.target.checked == false && selectAll.checked){
+        selectAll.checked = false;
+    }
+    var selectArr = $('.select');
+    if(e.target.checked){
+        let isSelectAll = true;
+        for(let i=0, len=selectArr.length; i< len; i++){
+            if(selectArr[i].checked == false){
+                isSelectAll = false;
+            }
+        }
+        if(isSelectAll && !selectAll.checked){
+            selectAll.checked = true;
+        }
+    }
+    computeTotal();
+  }
+  function changeNum(e){
+    var $this = $(e.target);
+    var type = $this.attr('data-type');
+    var curNum =  $this.siblings('input').val();
+    if(type == 'btnminus'){ //减少
+        if(curNum == 1){
+            $this.addClass('gray');
+            curNum = 1;
+            return;
+        }else{
+            curNum--;
+        }
+    }else if(type == 'btnadd'){//增加
+        curNum++;
+        if(curNum>1){
+            $this.siblings('.btn-minus').removeClass('gray');
+        }
+    }else{
+        if($this.val()<1){
+            curNum = 1;
+        }
+        curNum = $this.val();
+    }
+    $this.siblings('input').val(curNum)
+    computeTotal()
+  };
+  
   function selectAll(){
     var selectAll = document.getElementById('selectAll');
     var selectArr = document.getElementsByClassName('select')
@@ -129,6 +175,7 @@
         }
       }
     }
+    computeTotal();
   }
   function delCart(cId, e){
     $.ajax({
@@ -139,16 +186,52 @@
           console.log('res', res)
           if(res.code == 200){
             $(e.target).parent().parent().remove();
+            computeTotal()
           }
           alert(res.msg)
        },
        error:function(res,err){
           console.log('err', err);
        }
-   });
+    });
   }
-  function settle(){
+  function computeTotal(){
+    var sum = 0; 
+    var selectCkx = $('input[name="select"]:checked');
+    selectCkx.each(function(){
+        var price = $(this).parent().parent().children('.price').html();
+        var num = $(this).parent().parent().find('.num').val()
+        // console.log('price:', price, "num:", num)
+        sum += parseFloat(price) * parseFloat(num);
+    })
+    $('#totalPrice').html('￥'+sum+'元');
+  }
 
+  function settle(){
+    var selectCkx = $('input[name="select"]:checked');
+    let sltArr = []
+    selectCkx.each(function(){
+        var num = $(this).parent().parent().find('.num').val();
+        var cId = $(this).parent().attr('id');
+        sltArr.push({
+            cId,
+            num
+        })
+    })
+    var data = {
+        cart: sltArr
+    } 
+    $.ajax({
+       url:'/settle',
+       type:'POST',
+       data,
+       success:function(res){
+          alert(res.msg)
+       },
+       error:function(res,err){
+          console.log('err', err);
+       }
+    });
   }
 </script>
 </html>
